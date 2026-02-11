@@ -10,17 +10,18 @@ This repository serves as a comprehensive resource collection exploring the evol
 - How do databases enable coordination in multi-agent systems?
 - What are the emerging database patterns for RAG (Retrieval-Augmented Generation)?
 - How do vector databases integrate with traditional databases in AI architectures?
+- What role do DB Agents play in AI system architectures?
 - What are the performance and consistency trade-offs in AI-native data systems?
 
 ## 📚 Table of Contents
 
-- [Papers](#papers)
-- [Open Source Projects](#open-source-projects)
-- [Industry Practices](#industry-practices)
-- [Database Categories](#database-categories)
-- [Design Patterns](#design-patterns)
-- [Use Cases](#use-cases)
-- [Contributing](#contributing)
+- [📄 Papers](#-papers)
+- [🚀 Open Source Projects](#-open-source-projects)
+- [🏢 Industry Practices](#-industry-practices)
+- [🗄️ Database Categories](#️-database-categories)
+- [🏗️ Design Patterns](#️-design-patterns)
+- [💡 Use Cases](#-use-cases)
+- [🤝 Contributing](#-contributing)
 
 ---
 
@@ -37,6 +38,10 @@ This repository serves as a comprehensive resource collection exploring the evol
 ### LLM Applications & Data Management
 
 *Coming soon - Research on memory systems, context management, and data flows in LLM apps.*
+
+### DB Agent & Natural Language Interfaces
+
+*Coming soon - Papers on Text-to-SQL, NL2SQL, and natural language database interfaces in AI systems.*
 
 ### Database Systems for AI
 
@@ -62,6 +67,12 @@ This repository serves as a comprehensive resource collection exploring the evol
 
 | Project | Database Used | Role | Stars | Notes |
 |---------|---------------|------|-------|-------|
+| *To be added* | | | | |
+
+### DB Agent & Text-to-SQL Systems
+
+| Project | Database Support | Role in AI System | Stars | Notes |
+|---------|------------------|-------------------|-------|-------|
 | *To be added* | | | | |
 
 ### Vector Database Projects
@@ -114,6 +125,9 @@ This repository serves as a comprehensive resource collection exploring the evol
 
 ### Multi-Agent Coordination
 *Coming soon - Shared state, message passing, event sourcing patterns.*
+
+### DB Agent as Component
+*Coming soon - Integrating database agents (Text-to-SQL, NL2SQL) into multi-agent systems, their interaction patterns with other agents, and use cases in data-driven applications.*
 
 ### RAG Data Pipelines
 *Coming soon - Ingestion, chunking, embedding, indexing, retrieval patterns.*
