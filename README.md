@@ -173,19 +173,13 @@ If you find this resource useful for your research, please consider citing:
   year={2026},
   howpublished={\url{https://github.com/Guan-JW/awesome-db-for-ai-systems}}
 }
-``` -->
+```
 
----
+--- -->
 
 ## 📬 Contact & Discussion
 
 - **Issues**: For suggestions or corrections, please open an issue
-
----
-
-**Last Updated**: February 2026
-
-**Maintainers**: [To be added]
 
 ---
 
