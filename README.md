@@ -41,7 +41,9 @@ This repository serves as a comprehensive resource collection exploring the evol
 
 ### DB Agent & Natural Language Interfaces
 
-*Coming soon - Papers on Text-to-SQL, NL2SQL, and natural language database interfaces in AI systems.*
+- **A Survey of Data Agents: Emerging Paradigm or Overstated Hype?**. Yizhang Zhu, Liangwei Wang, Chenyu Yang, Xiaotian Lin, Boyan Li, Wei Zhou, Xinyu Liu, Zhangyang Peng, Tianqi Luo, Yu Li, Chengliang Chai, Chong Chen, Shimin Di, Ju Fan, Ji Sun, Nan Tang, Fugee Tsung, Jiannan Wang, Chenglin Wu, Yanwei Xu, Shaolei Zhang, Yong Zhang, Xuanhe Zhou, Guoliang Li, Yuyu Luo. *arXiv*, 2025.  
+  Brief summary: Surveys “data agents” that use tools/LLMs to interact with data systems (e.g., querying, analytics, and decision workflows), and discusses their architectures, capabilities, and challenges—useful for understanding how database access patterns, tooling, and evaluation fit into AI systems.  
+  [arXiv](https://arxiv.org/abs/2510.23587) · [PDF](papers/db-agent/data-agents-survey-arxiv-2510.23587.pdf)
 
 ### Database Systems for AI
 
