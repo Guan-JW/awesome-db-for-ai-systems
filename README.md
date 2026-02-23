@@ -41,9 +41,143 @@ This repository serves as a comprehensive resource collection exploring the evol
 
 ### DB Agent & Natural Language Interfaces
 
-- **A Survey of Data Agents: Emerging Paradigm or Overstated Hype?**. Yizhang Zhu, Liangwei Wang, Chenyu Yang, Xiaotian Lin, Boyan Li, Wei Zhou, Xinyu Liu, Zhangyang Peng, Tianqi Luo, Yu Li, Chengliang Chai, Chong Chen, Shimin Di, Ju Fan, Ji Sun, Nan Tang, Fugee Tsung, Jiannan Wang, Chenglin Wu, Yanwei Xu, Shaolei Zhang, Yong Zhang, Xuanhe Zhou, Guoliang Li, Yuyu Luo. *arXiv*, 2025.  
-  Brief summary: Surveys “data agents” that use tools/LLMs to interact with data systems (e.g., querying, analytics, and decision workflows), and discusses their architectures, capabilities, and challenges—useful for understanding how database access patterns, tooling, and evaluation fit into AI systems.  
-  [arXiv](https://arxiv.org/abs/2510.23587) · [PDF](papers/db-agent/data-agents-survey-arxiv-2510.23587.pdf)
+```
+NLIDB / Text-to-SQL 发展脉络
+
+I. 基准数据与任务定义层（Benchmark Era）
+   ├── 单轮跨库泛化
+   │   └── Spider (2018)
+   ├── 多轮上下文建模
+   │   ├── SParC (2019)
+   │   └── CoSQL (2019)
+   ├── 多语言扩展
+   │   └── MultiSpider (2023)
+   └── 真实数据库执行场景
+       └── BIRD (2023)
+
+II. 结构建模与解码约束层（Neural Parsing Era）
+   ├── Schema-aware 编码
+   │   └── RAT-SQL (2020)
+   └── 语法约束解码
+       └── PICARD (2021)
+
+III. LLM增强与可扩展系统层（LLM Scaling Era）
+   ├── 大规模Schema路由
+   │   └── DBCopilot (2025)
+   ├── 交互式多轮LLM框架
+   │   └── Interactive-T2S (2025)
+   └── Agentic强化优化
+       └── AGRO-SQL (2025)
+
+IV. Agent化数据库系统层（Database Agent Era）
+   ├── 端到端数据库Agent
+   │   └── AskDB (2025)
+   ├── 混合轻量+大模型Agent
+   │   └── Hybrid Agentic System (2025)
+   └── 自动特征工程Agent
+       └── ReFuGe (2026)
+
+V. 评测、生成与安全层（Evaluation & Security）
+   ├── 自动对话生成与评测
+   │   ├── Automated Evaluation of DB Agents (2025)
+   │   └── Agent-based Dialogue Generation (2025)
+   └── 安全性与SQL注入攻击
+       └── SIGMOD 2026 Security Paper
+
+VI. 范式抽象与理论层（Data Agent Abstraction）
+   ├── NLIDB系统综述
+   │   └── NLI4DB (2024)
+   ├── Data Agent综述
+   │   ├── Survey of Data Agents (2025)
+   │   └── Data Agents: Levels (2026)
+   └── 生成式数据库管理员
+       └── Gen-DBA (2026)
+```
+
+- **Spider: A Large-Scale Human-Labeled Dataset for Complex and Cross-Domain Semantic Parsing and Text-to-SQL Task**. *EMNLP*, 2018.
+  - **Brief summary:** Foundational cross-domain Text-to-SQL benchmark introducing complex multi-table SQL over unseen databases. Contains 10k+ questions across 200 databases with disjoint train/test schemas to evaluate schema generalization and compositional reasoning. It established the modern evaluation paradigm for NL→SQL systems.
+  - **Link:** https://arxiv.org/abs/1809.08887
+- **SParC: Cross-Domain Semantic Parsing in Context**. *ACL*, 2019.
+  - **Brief summary:** Extends Spider to multi-turn conversational Text-to-SQL. Evaluates context tracking, dialogue state modeling, and sequential query refinement across turns, forming an early benchmark for conversational NLIDB systems.
+  - **Link:** https://aclanthology.org/P19-1443/
+- **CoSQL: A Conversational Text-to-SQL Challenge**. *EMNLP*, 2019.
+  - **Brief summary:** Introduces a human-in-the-loop conversational benchmark where users and systems interact to iteratively construct SQL queries. Emphasizes clarification, correction, and dialogue-based query refinement.
+  - **Link:** https://aclanthology.org/D19-1204/
+
+* **MultiSpider: Multilingual Text-to-SQL Semantic Parsing Benchmark**. *AAAI*, 2023.
+
+  - **Brief summary:** Multilingual extension of Spider covering seven languages. Evaluates cross-lingual generalization and multilingual NL→SQL transfer, expanding NLIDB research beyond English-only settings.
+
+  - **Link:** https://doi.org/10.1609/aaai.v37i11.26499
+
+- **BIRD: A Big Bench for Large-Scale Database-Grounded Text-to-SQL Evaluation**. *NeurIPS/Arxiv Preprint*, 2023.
+  - **Brief summary:** Enterprise-scale benchmark emphasizing real database values, noisy data, and execution grounding. Moves beyond schema-only reasoning to value-aware SQL generation, reflecting realistic NLIDB deployment scenarios.
+  - **Link:** https://bird-bench.github.io/
+
+------
+
+- **RAT-SQL: Relation-Aware Schema Encoding and Linking for Text-to-SQL Parsers**. *ACL*, 2020.
+  - **Brief summary:** Proposes relation-aware self-attention to jointly encode schema graphs and natural language queries, significantly improving schema linking and cross-domain generalization on Spider. Influenced many structural encoding approaches in neural Text-to-SQL.
+  - **Link:** https://arxiv.org/abs/1911.04942
+- **PICARD: Parsing Incrementally for Constrained Auto-Regressive Decoding from Language Models**. *EMNLP*, 2021.
+  - **Brief summary:** Introduces grammar-constrained decoding for LLM-based SQL generation, ensuring syntactic validity during autoregressive generation. Substantially improves execution accuracy and robustness on Spider-style benchmarks.
+  - **Link:** https://aclanthology.org/2021.emnlp-main.779/
+
+------
+
+- **DBCopilot: Natural Language Querying over Massive Databases via Schema Routing**. *EDBT*, 2025.
+  - **Brief summary:** Proposes a schema-routing framework to scale Text-to-SQL over large enterprise databases. Uses lightweight models for schema pruning and large LLMs for SQL synthesis, improving efficiency and scalability in real-world deployments.
+  - **Link:** [arXiv](https://arxiv.org/abs/2312.03463)
+- **Interactive-T2S: Multi-Turn Interactions for Text-to-SQL with Large Language Models**. *CIKM*, 2025.
+  - **Brief summary:** Develops an interactive multi-turn Text-to-SQL framework with clarification strategies and dialogue state tracking. Enhances robustness for ambiguous or underspecified user queries.
+  - **Link:** [ACM](https://dl.acm.org/doi/abs/10.1145/3746252.3761052)
+- **AGRO-SQL: Agentic Group-Relative Optimization with High-Fidelity Data Synthesis**. *arXiv*, 2025.
+  - **Brief summary:** Introduces an agentic reinforcement learning framework for Text-to-SQL combining high-fidelity synthetic data and Group-Relative Policy Optimization (GRPO). Improves compositional reasoning and generalization on complex SQL generation tasks.
+  - **Link:** [arXiv](https://arxiv.org/abs/2512.23366)
+
+------
+
+
+- **AskDB: An LLM Agent for Natural Language Interaction with Relational Databases**. *arXiv*, 2025.
+  - **Brief summary:** End-to-end LLM database agent supporting schema parsing, SQL generation, execution grounding, verification, and natural language explanation. Emphasizes execution-aware reasoning and unified pipeline design.
+  - **Link:** [arXiv](https://arxiv.org/abs/2511.16131)
+- **Hybrid Agentic System for Schema-Aware NL2SQL Generation**. *Cornerstone*, 2025.
+  - **Brief summary:** Designs a hybrid architecture combining lightweight models for routine queries and large LLM agents for complex cases. Incorporates schema-aware distillation to balance efficiency and accuracy in production NL2SQL systems.
+  - **Link:** [Cornerstone](https://cornerstone.lib.mnsu.edu/etds/1559/)
+- **ReFuGe: Feature Generation for Prediction Tasks on Relational Databases with LLM Agents**. *arXiv*, 2026.
+  - **Brief summary:** Proposes a collaborative multi-agent framework for automated feature engineering over relational databases, bridging NL-based database interaction and downstream predictive modeling tasks.
+  - **Link:** [arXiv](https://arxiv.org/abs/2601.17735)
+
+-----
+
+- **Automated Evaluation of Database Conversational Agents**. *SciTePress*, 2025.
+  - **Brief summary:** Proposes automated evaluation pipelines using synthetic test construction and evaluator agents to assess conversational robustness, query correctness, and dialogue consistency in LLM-based DB agents.
+  - **Link:** [SciTePress](https://www.scitepress.org/Link.aspx?doi=10.5220/0013732900003985)
+- **Automation of the Generation and Evaluation of Dialogues for Text-to-SQL Systems: An Agent-based Approach**. *PUC-Rio*, 2025.
+  - **Brief summary:** Uses a dual-agent framework to automatically generate and evaluate multi-turn Text-to-SQL dialogues, addressing dataset scarcity and improving evaluation scalability.
+  - **Link:** [PUC-Rio](https://www.maxwell.vrac.puc-rio.br/74368/74368.PDF)
+- **Are Your LLM-based Text-to-SQL Models Secure? Exploring SQL Injection via Backdoor Attacks**. *SIGMOD*, 2026.
+  - **Brief summary:** Analyzes security vulnerabilities in LLM-based Text-to-SQL systems, demonstrating susceptibility to SQL injection and backdoor attacks. Proposes mitigation strategies for secure deployment in production databases.
+  - **Link:** [arXiv](https://arxiv.org/abs/2503.05445)
+
+------
+
+* **NLI4DB: A Systematic Review of Natural Language Interfaces for Databases**. Mengyi Liu, Jianqiu Xu. *Preprint*, 2024.
+
+  - **Brief summary:** Comprehensive survey of NLIDB systems. Decomposes NL→query pipelines into preprocessing, semantic understanding, and translation. Covers rule-based, neural, and LLM-based approaches, benchmarks, evaluation metrics, and emerging paradigms such as Text-to-SQL, SQL2Text, and Speech2SQL.
+
+  - **Link:** [arXiv](https://arxiv.org/abs/2503.02435)
+
+
+- **A Survey of Data Agents: Emerging Paradigm or Overstated Hype?**. *arXiv*, 2025.
+  - **Brief summary:** Surveys LLM-based data agents interacting with data systems through tool use and orchestration. Discusses architectural patterns, evaluation gaps, and limitations when integrating agents with database infrastructures.
+  - **Link:** [arXiv](https://arxiv.org/abs/2510.23587)
+- **Data Agents: Levels, State of the Art, and Open Problems**. *arXiv (SIGMOD 2026 Tutorial)*, 2026.
+  - **Brief summary:** Proposes a six-level taxonomy of data agents spanning query answering, analytics, reasoning, orchestration, and autonomous decision-making. Frames open research problems for database-integrated LLM agents.
+  - **Link:** [arXiv](https://arxiv.org/abs/2602.04261v1)
+- **Gen-DBA: Generative Database Agents (Towards a Move 37 for Databases)**. *arXiv*, 2026.
+  - **Brief summary:** Explores generative database agents capable of producing optimization strategies and tuning plans using transformer-based models and staged training. Extends agent concepts beyond query answering into database administration.
+  - **Link:** [arXiv](https://arxiv.org/abs/2601.16409)
 
 ### Database Systems for AI
 
