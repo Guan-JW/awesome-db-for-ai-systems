@@ -1,6 +1,7 @@
-# Paper Notes: Vector Database Systems
+# [Layer 1 · Storage] Paper Notes: Vector Database Systems
 
 > How should vector stores be designed and optimized for AI workloads requiring semantic similarity search at scale?
+> **三层定位**：底层存储引擎——向量数据库是 AI 系统最核心的静态数据基础设施之一。
 
 ---
 

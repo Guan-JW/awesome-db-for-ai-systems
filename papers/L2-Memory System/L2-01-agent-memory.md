@@ -1,7 +1,8 @@
-# Paper Notes: AI Agent Memory Systems
+# [Layer 2 · Memory] Paper Notes: AI Agent Memory Systems
 
 > How do AI agents store, retrieve, and manage knowledge across sessions?
 > Key themes: short-term context, long-term persistent memory, memory distillation (converting fuzzy AI context → precise structured DB records).
+> **三层定位**：中间层记忆系统——管理 Agent 运行时产生的动态记忆数据。
 
 ---
 
@@ -55,7 +56,7 @@ Agent 通过 **function call（类比系统调用/中断）** 主动在层级间
 
 **实验结果**：两个场景验证——① 分析超长文档（远超 context window）；② 多 session 持久化对话记忆，对话信息跨会话保留。MemGPT 可以"记住"几周前对话中的事项。
 
-**与本 survey 的关联**：MemGPT 是 DB-for-AI 的最直接示范——它将向量 DB 和关系 DB 作为 agent 记忆的第一公民，定义了 archival memory = 向量 DB、recall memory = 关系 DB 的架构范式，是本 survey 第一章的核心论文。
+**与本 survey 的关联**：MemGPT 是 DB-for-AI 的最直接示范——它将向量 DB 和关系 DB 作为 agent 记忆的第一公民，定义了 archival memory = 向量 DB、recall memory = 关系 DB 的架构范式，是本 survey 第 5 章（Agent Memory，Layer 2）的核心论文。
 
 **小结**：MemGPT 把向量数据库变成了 LLM 的"外部硬盘"，第一次系统性地证明了数据库对 AI agent 的不可替代性。
 

@@ -15,23 +15,23 @@
 
    - 文档：https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview
    - Foundry IQ 博客：https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/foundry-iq-unlocking-ubiquitous-knowledge-for-agents/4470812
-   - 可用于章节：`4.RAG`、`5.Vector DB`、`7.Enterprise Integration`
+   - 可用于章节：`6.RAG`、`3.Vector DB`、`9.DB MAS / Enterprise`
 2. **Databricks Mosaic AI Vector Search** — A
 
    - 文档：https://docs.databricks.com/aws/en/vector-search/vector-search
-   - 可用于章节：`4.RAG`、`5.Vector DB`、`7.Enterprise Integration`
+   - 可用于章节：`6.RAG`、`3.Vector DB`、`9.DB MAS / Enterprise`
 3. **Snowflake Cortex / AI & ML** — A
 
    - 文档：https://docs.snowflake.com/en/guides-overview-ai-features
-   - 可用于章节：`7.Enterprise Integration`、`8.Governance & Security`
+   - 可用于章节：`9.DB MAS / Enterprise`、`11.Governance`
 4. **MongoDB Atlas Vector Search** — A
 
    - 文档：https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-overview/
-   - 可用于章节：`5.Vector DB`、`6.NL Interface`、`7.Enterprise Integration`
+   - 可用于章节：`3.Vector DB`、`8.DB Agent`、`9.DB MAS / Enterprise`
 5. **Elasticsearch kNN / Hybrid Search** — A
 
    - 文档：https://www.elastic.co/guide/en/elasticsearch/reference/current/knn-search.html
-   - 可用于章节：`4.RAG`、`5.Vector DB`
+   - 可用于章节：`6.RAG`、`3.Vector DB`
 
 ## 二、开源基础设施（可复现）
 
@@ -61,15 +61,26 @@
 1. **LlamaIndex 存储层指南** — A
 
    - 文档：https://developers.llamaindex.ai/python/framework/module_guides/storing/
-   - 可用于章节：`3.Agent Memory`、`4.RAG`
+   - 可用于章节：`5.Agent Memory`、`6.RAG`
 2. **Pinecone 学习中心（向量数据库工程要点）** — B
 
    - 文档：https://www.pinecone.io/learn/vector-database/
-   - 可用于章节：`5.Vector DB`、`7.Enterprise Integration`
+   - 可用于章节：`3.Vector DB`、`9.DB MAS / Enterprise`
 
-## 四、中文讲解与行业传播（辅助理解）
+## 四、章节映射（按三层架构）
 
-> 这类来源默认按 C 级使用：用于解释概念、补中文表达，不单独作为核心论据。
+> 以下映射对应重组后的 survey/outline.md 章节编号。
+
+- **Chapter 3 (Vector DB — Layer 1)**: Use Milvus, Qdrant, Weaviate architecture docs; Elasticsearch/OpenSearch/MongoDB operational knobs as production-side evidence.
+- **Chapter 4 (Training Data & Embedding — Layer 1)**: Use Databricks Delta Sync, embedding lifecycle docs.
+- **Chapter 5 (Agent Memory — Layer 2)**: Use LlamaIndex storage guides, Mem0 docs.
+- **Chapter 6 (RAG — Layer 2)**: Use Azure AI Search, Databricks, Elastic evidence to argue why agentic + hybrid retrieval is becoming mainstream.
+- **Chapter 7 (Runtime State — Layer 2)**: Use LangGraph checkpointing docs, vLLM/SGLang KV cache management.
+- **Chapter 8 (DB Agent — Layer 3)**: Use Spider/BIRD benchmarks and enterprise NL2SQL deployment cases.
+- **Chapter 9 (DB MAS — Layer 3)**: Use AutoGen, AgentScope, Foundry IQ as multi-agent platform evidence.
+- **Chapter 11 (Governance — Cross-cutting)**: Use ACL, permission inheritance, billing/usage observability details from Azure, Databricks, Qdrant.
+
+## 五、中文讲解与行业传播（辅助理解）
 
 建议长期跟踪（公众号/社区）：
 

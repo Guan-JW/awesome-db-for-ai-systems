@@ -1,6 +1,7 @@
-# Paper Notes: Text-to-SQL & Natural Language DB Interfaces
+# [Layer 3 · Execution] Paper Notes: DB Agent — Text-to-SQL & NL Interfaces
 
 > How do AI systems translate natural language into executable SQL, and what does this reveal about AI-DB interaction challenges?
+> **三层定位**：上层执行引擎——数据库作为 AI 应用直接操作的对象，DB Agent 通过自然语言与数据库交互。
 
 ---
 

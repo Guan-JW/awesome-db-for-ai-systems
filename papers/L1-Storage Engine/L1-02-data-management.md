@@ -1,7 +1,8 @@
-# Paper Notes: AI-Native Database Design
+# [Layer 1 · Storage] Paper Notes: Training Data & Embedding Management
 
-> How should database systems be redesigned or extended to natively support AI workloads?
-> Core challenges: multimodal data, model-in-database inference, AI-generated data deduplication, learned index structures, consistency under AI writes.
+> How should database systems manage training data, embeddings, and AI-native storage at scale?
+> Core challenges: semantic deduplication, learned indexes, multimodal data, embedding lifecycle.
+> **三层定位**：底层存储引擎——训练数据管理、Embedding 管理、AI 原生存储设计。
 
 ---
 
@@ -34,7 +35,7 @@
 
 ### [VBASE] Unifying Online Vector Similarity Search and Relational Queries
 
-*(Also listed in vector-db.md — cross-reference)*
+*(Also listed in L1-01-vector-db.md — cross-reference)*
 
 - **Venue**: OSDI 2023
 - **Key Contribution**: Hybrid queries (vector similarity + SQL predicates) without index rebuild.

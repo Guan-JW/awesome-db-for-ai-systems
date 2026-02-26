@@ -1,7 +1,8 @@
-# Paper Notes: Enterprise AI Integration Patterns
+# [Layer 3 · Execution] Paper Notes: Enterprise AI Integration Patterns
 
 > How do enterprise AI systems integrate with existing database infrastructure?
 > Key themes: RAG over enterprise data lakes, multi-source federated retrieval, data governance for AI outputs.
+> **三层定位**：上层执行引擎——数据库在企业 AI 应用中的集成模式与治理实践。
 
 ---
 
@@ -96,9 +97,9 @@
 
 ---
 
-## How to use these sources in survey chapters
+## How to use these sources in survey chapters (三层架构版)
 
-- **Chapter 4 (RAG)**: Use Azure/Databricks/Elastic evidence to argue why agentic + hybrid retrieval is becoming mainstream.
-- **Chapter 5 (Vector DB)**: Use Elasticsearch/OpenSearch/MongoDB operational knobs as production-side evidence beyond ANN algorithms.
-- **Chapter 7 (Enterprise Integration)**: Use Foundry IQ and Databricks as two concrete “platformized knowledge layer” cases.
-- **Chapter 8 (Governance/Operations)**: Use ACL, permission inheritance, and billing/usage observability details as practical governance evidence.
+- **Chapter 3 (Vector DB — Layer 1)**: Use Elasticsearch/OpenSearch/MongoDB operational knobs as production-side evidence beyond ANN algorithms.
+- **Chapter 6 (RAG — Layer 2)**: Use Azure/Databricks/Elastic evidence to argue why agentic + hybrid retrieval is becoming mainstream.
+- **Chapter 9 (DB MAS — Layer 3)**: Use Foundry IQ and Databricks as two concrete "platformized knowledge layer" cases.
+- **Chapter 11 (Governance — Cross-cutting)**: Use ACL, permission inheritance, and billing/usage observability details as practical governance evidence.

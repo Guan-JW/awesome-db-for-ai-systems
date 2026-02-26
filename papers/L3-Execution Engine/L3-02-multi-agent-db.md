@@ -1,7 +1,8 @@
-# Paper Notes: Multi-Agent Coordination & Databases
+# [Layer 3 · Execution] Paper Notes: DB Multi-Agent Systems
 
-> How do multi-agent systems use databases for coordination, state sharing, and communication?
+> How do multi-agent systems use databases as both coordination infrastructure and application target?
 > Key insight: as agent complexity grows, in-memory shared state is insufficient — persistent, queryable databases become essential.
+> **三层定位**：上层执行引擎——多个 Agent 协作操作数据库，DB 既是协调工具又是应用对象。
 
 ---
 

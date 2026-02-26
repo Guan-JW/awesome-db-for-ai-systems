@@ -1,7 +1,8 @@
-# Paper Notes: RAG & Retrieval Systems
+# [Layer 2 · Memory] Paper Notes: RAG & Retrieval Pipelines
 
 > How do retrieval systems bridge LLM knowledge gaps using external databases?
 > Key themes: dense retrieval, adaptive retrieval, graph-structured retrieval.
+> **三层定位**：中间层记忆系统——RAG 检索管线管理 AI 运行时的动态上下文组装与知识注入。
 
 ---
 
