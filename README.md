@@ -12,7 +12,7 @@ This repository aims to systematically organize research and practice at the int
 
 - [DB as the Storage Engine ｜ Bottom Layer](#layer-1)
 - [DB as the Memory System ｜ Middleware/OS Layer](#layer-2)
-- [DB as the Reasoning & Execution Engine ｜ Top Layer](#layer-3)
+- [DB as the Execution Engine ｜ Top Layer](#layer-3)
 
 
 <a name="layer-1"></a>
@@ -24,7 +24,7 @@ This repository aims to systematically organize research and practice at the int
 
 
 <a name="layer-3"></a>
-## 3. DB as the Reasoning & Execution Engine (Top Layer)
+## 3. DB as the Execution Engine (Top Layer)
 
 |Date|Category|Title|Paper|Code|Venue|
 |:---:|:---|:---|:---:|:---:|:---:|  
