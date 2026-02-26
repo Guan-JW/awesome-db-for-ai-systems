@@ -20,7 +20,7 @@ This repository aims to systematically organize research and practice at the int
 
 
 <a name="layer-2"></a>
-## 2. DB as the Unified Memory System (Middleware/OS Layer)
+## 2. DB as the Memory System (Middleware/OS Layer)
 
 
 <a name="layer-3"></a>
