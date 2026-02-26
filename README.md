@@ -11,7 +11,7 @@ This repository aims to systematically organize research and practice at the int
 ##  Contents
 
 - [DB as the Storage Engine ｜ Bottom Layer](#layer-1)
-- [DB as the Memory System ｜ Middleware/OS Layer](#layer-2)
+- [DB as the Memory System ｜ Middleware Layer](#layer-2)
 - [DB as the Execution Engine ｜ Top Layer](#layer-3)
 
 
@@ -20,7 +20,7 @@ This repository aims to systematically organize research and practice at the int
 
 
 <a name="layer-2"></a>
-## 2. DB as the Memory System (Middleware/OS Layer)
+## 2. DB as the Memory System (Middleware Layer)
 
 
 <a name="layer-3"></a>
