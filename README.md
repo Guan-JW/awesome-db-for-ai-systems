@@ -29,4 +29,4 @@ This repository aims to systematically organize research and practice at the int
 |Date|Category|Title|Paper|Code|Venue|
 |:---:|:---|:---|:---:|:---:|:---:|  
 |2025.12| MAS for RDBMS | [**Thucy**]: An LLM-based Multi-Agent System for Claim Verification across Relational Databases (@UW) | [[pdf]](https://arxiv.org/pdf/2512.03278) | [[code]](https://github.com/thucy-ai/thucy) | arXiv |
-|2024.08| MAS  RDBMS | [**AutoTQA**]: Towards Autonomous Tabular Question Answering through Multi-Agent Large Language Models (@ECNU) | [[pdf]](https://dl.acm.org/doi/pdf/10.14778/3685800.3685816) | |  VLDB'24 |
+|2024.08| MAS for RDBMS | [**AutoTQA**]: Towards Autonomous Tabular Question Answering through Multi-Agent Large Language Models (@ECNU) | [[pdf]](https://dl.acm.org/doi/pdf/10.14778/3685800.3685816) | |  VLDB'24 |
