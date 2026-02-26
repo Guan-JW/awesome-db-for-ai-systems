@@ -11,7 +11,7 @@ This repository aims to systematically organize research and practice at the int
 ##  Contents
 
 - [DB as the Storage Engine ｜ Bottom Layer](#layer-1)
-- [DB as the Unified Memory System ｜ Middleware/OS Layer](#layer-2)
+- [DB as the Memory System ｜ Middleware/OS Layer](#layer-2)
 - [DB as the Reasoning & Execution Engine ｜ Top Layer](#layer-3)
 
 
