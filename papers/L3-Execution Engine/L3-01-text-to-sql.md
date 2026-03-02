@@ -37,19 +37,11 @@
 
 #### 阅读笔记
 
-**解决什么问题**：Spider 等早期 Text-to-SQL 基准使用干净、小型的玩具数据库，与现实企业数据库严重脱节，导致高分模型在实际部署中大量失败。
+NeurIPS 2023 的 benchmark。跟 Spider 比最大的区别是"真实"：95 个真实数据库共 33.4 GB，数据里有 NULL、拼写错误、格式不一致。而且部分问题需要领域知识才能答对，比如"BMI>30 算肥胖"这种信息在 schema 里是找不到的。
 
-**核心思路**：构建更真实的 benchmark，四项关键升级：
-- **规模**：12,751 问答对，95 个真实数据库，总大小 33.4 GB，覆盖 37 个行业领域
-- **脏数据**：数据库含 NULL、拼写错误、格式不一致等真实问题
-- **外部知识**：正确答案需要领域知识（如"BMI > 30 算肥胖"），仅凭 schema 无法作答
-- **新指标**：增加 SQL 执行效率评测（execution efficiency），不只看答案正确与否；引入 Value Linking 任务：将问题实体与数据库真实值关联
+结果相当惊人：ChatGPT 只有 40.08%，人类标注员 92.96%。差了 52 分。GPT-4 当时也就 50% 左右。说明 AI 在面对真实脏数据库的时候能力还差得远。
 
-**实验结果**：ChatGPT（3.5）仅达 40.08% EX，而人类标注员达 92.96%——52 分差距揭示了巨大的能力鸿沟。GPT-4 当时约 50%，即使最强模型在真实 DB 场景下仍有大量失败。
-
-**与本 survey 的关联**：BIRD 证明"Text-to-SQL = 数据库理解问题"，不只是 SQL 语法生成。AI agent 访问数据库需要理解 DB 的内容和领域知识，不能只靠 schema——正是本 survey 研究"AI 如何理解和使用 DB"的核心 motivation 之一。
-
-**小结**：BIRD 证明 AI 在真实数据库面前几乎是文盲，ChatGPT 只有 40% 正确率，说明 agent 与数据库的交互远比我们想象的难。
+这篇对理解我们 survey 的 motivation 很重要：Text-to-SQL 不只是语法翻译问题，AI 需要理解数据库的内容和业务语义。可以放第 8 章讨论 DB Agent 面临的挑战时引用。
 
 ---
 
@@ -100,20 +92,11 @@
 
 #### 阅读笔记
 
-**解决什么问题**：复杂 NL2SQL 任务（多表 JOIN、嵌套子查询、聚合运算）单一模型一次性生成很难准确，且出错后没有机制自动检测和修复。
+腾讯的工作，三个 agent 分工合作：Selector 做 schema 裁剪（从全量 schema 里选相关子集），Decomposer 把复杂问题拆成子问题逐步生成 SQL，Refiner 执行 SQL、分析报错、自动修复。三者通过一个共享消息库传递中间状态。
 
-**核心思路**：三个专职 agent 协同完成 Text-to-SQL，通过共享消息状态库（shared message DB）传递中间结果：
-- **Selector agent** — schema 裁剪，从全量 schema 中选出与问题相关的子 schema，减少 LLM 负担
-- **Decomposer agent** — 把复杂问题拆解为若干简单子问题，用 CoT 逐步生成 SQL 片段
-- **Refiner agent** — 执行 SQL，若报错则分析错误日志并自动修复
+基于 GPT-4 在 BIRD test set 上达到 59.59%（当时排第一），消融实验显示每个 agent 都有贡献（去掉 Refiner 下降 ~5%，去掉 Decomposer 下降 ~3%）。他们还开源了 SQL-Llama（LLaMA-2 7B fine-tune），7B 模型做到 43.94%，小模型里最好的。
 
-共享消息库记录每步中间结果（类似 DB 的 staging table），保证各 agent 信息同步。同时开源 SQL-Llama（LLaMA-2 7B fine-tune），证明小模型也可接近 GPT-4 水平。
-
-**实验结果**：基于 GPT-4 在 BIRD test set 达 59.59% EX（当时 SOTA）；SQL-Llama（7B）达 43.94%，是同参数量开源最优。消融实验：无 Decomposer 时下降约 3%，无 Refiner 时下降约 5%，每个 agent 均有明显贡献。
-
-**与本 survey 的关联**：MAC-SQL 是多 agent 访问数据库的典型案例——agents 用 DB 协调自身（共享消息库），同时访问目标 DB（查询企业数据库）。这种双重 DB 角色正是本 survey 的核心研究场景之一。
-
-**小结**：MAC-SQL 用三 agent + 共享状态库把 Text-to-SQL 正确率推到 60%，展示了 multi-agent 协同如何显著提升 AI 的 DB 访问能力。
+对 survey 比较有启发的一点是：这三个 agent 同时在"用"数据库（查企业数据）和"靠"数据库做协调（共享消息库充当了 staging table 的角色）。数据库在这里扮演了双重角色，第 8、9 章都可以引用。
 
 ---
 
@@ -129,3 +112,19 @@
 
 **Key Contribution**:
 > Shows the critical impact of *how* examples are stored and retrieved from the few-shot example database.
+
+---
+
+## 补充资料：行业实践与技术博客
+
+- Spider Leaderboard：https://yale-lily.github.io/spider  
+  所有做 Text-to-SQL 的人都会盯的排行榜。可以快速看到当前 SOTA 是多少、哪些方法排在前面。不过注意 Spider 1.0 上的分数已经比较卷了（>90%），现实中的 Text-to-SQL 远没有这么高，看 BIRD 的榜单更有参考价值。
+
+- **Defog.ai 的博客和开源模型**：https://defog.ai/blog/  
+  做开源 Text-to-SQL 的初创公司。他们开源了 SQLCoder（基于 Code Llama fine-tune），配套的博客记录了做数据、调模型、处理 schema 信息的各种实战经验。比如怎么处理几百张表的 schema 塞不进 context window 的问题，写得挺实在的。
+
+- 知乎和公众号上搜"Text-to-SQL 落地"能看到不少来自甲方和乙方的吐槽。反复出现的问题有：用户问的问题太模糊 LLM 瞎猜、schema 注释缺失导致选错表、多表 JOIN 生成的 SQL 慢得离谱、安全性问题（用户是否能通过自然语言注入执行恶意 SQL）……基本上都是论文里不怎么讨论但实际很头疼的问题。
+
+- BIRD 排行榜（https://bird-bench.github.io/ ）比 Spider 更接近真实场景，目前最好的方法也就 70% 左右。排行榜页面还有各种模型的详细对比，包括不同难度级别和不同数据库引擎上的表现。
+
+- Vanna（https://github.com/vanna-ai/vanna ）是一个比较火的开源 Text-to-SQL 项目，思路是先让用户提供一批 question-SQL 样例训练 RAG 检索，推理时检索相似样例做 few-shot。代码简洁，几分钟就能跑起来一个 demo，适合想快速搭个原型的同学。

@@ -33,8 +33,7 @@
 **Limitation / Caution**:
 > Some capabilities are in preview; for conservative production rollout, teams may still use classic RAG path first.
 
-**One-line retell**:
-> 企业正在把 RAG 从“每个团队自己拼”改成“统一知识层复用”。
+**简单说**：企业在把 RAG 从“每个团队自己拼”改成“统一知识层复用”。
 
 ---
 
@@ -52,8 +51,7 @@
 **Limitation / Caution**:
 > Different endpoint types have explicit limits and trade-offs (capacity/latency/sync behavior). Some storage-optimized capabilities are preview-labeled.
 
-**One-line retell**:
-> Databricks 的核心做法是“向量检索贴着数据湖跑”，而不是另起一套孤立系统。
+**一句话总结**：Databricks 做的是让向量检索贴着数据湖跑，而不是另起一套。
 
 ---
 
@@ -73,8 +71,7 @@
 **Limitation / Caution**:
 > Tuning cost is real: `num_candidates`, quantization, filter strategy, and reranking settings materially affect latency and quality.
 
-**One-line retell**:
-> 线上检索很少是纯向量，关键词与向量的混合几乎是标配。
+**备注**：线上很少纯向量检索，关键词+向量混合基本是标配。
 
 ---
 
@@ -92,8 +89,7 @@
 **Limitation / Caution**:
 > Strongly depends on embedding quality and schema discipline; retrieval quality can degrade if metadata fields are loosely managed.
 
-**One-line retell**:
-> 不少企业并不会单独引入新向量库，而是优先在现有文档数据库里就地做向量能力。
+不少团队不会单独引入向量库，而是在现有文档库里加向量能力。
 
 ---
 

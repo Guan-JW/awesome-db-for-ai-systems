@@ -45,20 +45,13 @@
 
 #### 阅读笔记
 
-**解决什么问题**：LLM 上下文窗口有限（早期 ~4K token），无法进行跨 session 的长文档分析和持久化对话记忆，导致 agent 每次对话都"失忆"。
+这篇的核心想法是把 OS 的存储层级搬到 LLM 上来：上下文窗口 = RAM，向量数据库 = 磁盘，agent 通过 function call 在两层之间换入换出数据。
 
-**核心思路**：把 LLM 类比为操作系统进程，上下文窗口 = RAM，外部存储 = 磁盘：
-- **Main context**（RAM）= LLM 实时处理的内容
-- **Archival memory**（慢存储）= 向量数据库，按语义相似度 ANN 检索
-- **Recall memory**（缓存）= KV / 关系 DB，按时间/关键词检索对话历史
+当时（2023 年）context window 还只有 4K，跨 session 记忆基本不可能。MemGPT 用了两种外部存储：archival memory 放向量库做语义检索，recall memory 放关系型 DB 按时间/关键词查历史对话。
 
-Agent 通过 **function call（类比系统调用/中断）** 主动在层级间换入换出数据，无需人工干预。
+实验是在两个场景上验的——超长文档分析（远超 context window）和多 session 持久记忆。效果还行，但记忆替换策略比较简单，多 agent 之间也没有一致性保证，后续工作应该有改进空间。
 
-**实验结果**：两个场景验证——① 分析超长文档（远超 context window）；② 多 session 持久化对话记忆，对话信息跨会话保留。MemGPT 可以"记住"几周前对话中的事项。
-
-**与本 survey 的关联**：MemGPT 是 DB-for-AI 的最直接示范——它将向量 DB 和关系 DB 作为 agent 记忆的第一公民，定义了 archival memory = 向量 DB、recall memory = 关系 DB 的架构范式，是本 survey 第 5 章（Agent Memory，Layer 2）的核心论文。
-
-**小结**：MemGPT 把向量数据库变成了 LLM 的"外部硬盘"，第一次系统性地证明了数据库对 AI agent 的不可替代性。
+这篇对 survey 第 5 章很重要，可以作为"agent memory = 外挂数据库"这个范式的起始案例。
 
 ---
 
@@ -80,18 +73,13 @@ Agent 通过 **function call（类比系统调用/中断）** 主动在层级间
 
 #### 阅读笔记
 
-**解决什么问题**：如何让 AI agent 表现出可信的、类人的长期行为——包括记住过去发生的事、从经验中建立高层认知、与其他 agent 产生社会性协作涌现。
+这篇做了个挺有意思的实验：25 个 AI agent 在虚拟小镇里生活，每个 agent 有个 append-only 的"记忆流"记录看到的一切。检索时不只按相似度，而是用 recency（时效性，指数衰减）+ importance（重要性，LLM 打 1-10 分）+ relevance（语义相关度）三个维度加权检索。
 
-**核心思路**：25 个 agent 在一个类《模拟人生》的小镇沙盒中运行，每个 agent 有三层机制：
-- **Memory stream**（记忆流）= append-only 事件日志，记录所有观测、对话、行动
-- **检索机制** = 三维评分加权：时效性（recency, 指数衰减）+ 重要性（importance, LLM 打分 1-10）+ 相关性（relevance, 余弦相似度）
-- **Reflection 机制** = LLM 定期从原始观测中归纳出高层洞察（如"Klaus 喜欢绘画"）并写回记忆，把 unstructured log 蒸馏成 structured knowledge
+更有意思的是反思机制（reflection）：agent 定期从一堆零散记忆里归纳出高层结论，比如"Klaus 喜欢画画"，然后把归纳结果也写回记忆流。相当于把散乱的原始 log 提炼成结构化知识。
 
-**实验结果**：用户只给了"在小镇举办情人节舞会"的初始想法，25 个 agent 自主完成了邀请、计划、参加的全流程——涌现行为无需显式编程。用户评测中 agent 行为被认为比无记忆基线更真实可信。
+最终效果：研究者只给了一个"办情人节舞会"的 prompt，25 个 agent 自发完成了邀请、策划、参加的全过程。用户测评认为有反思机制的 agent 行为比无记忆的要真实很多。
 
-**与本 survey 的关联**：Generative Agents 把向量检索作为记忆系统的基础，首次大规模实验展示了"数据库驱动的 agent 社会"。Reflection 机制本质是从 unstructured log 向 structured knowledge 的自动蒸馏——对应本 survey 中"记忆压缩与知识提炼"这一研究方向。
-
-**小结**：25 个 AI agent 靠一个向量数据库"记忆流"就实现了可信的社会行为涌现，直接证明了数据库设计决定 agent 行为质量。
+对我们 survey 的意义：数据库的设计（怎么存、怎么检索、怎么聚合）直接影响了 agent 行为的质量。这个可以放第 5 章讨论"记忆压缩和知识提炼"的时候用。
 
 ---
 
@@ -128,3 +116,20 @@ Agent 通过 **function call（类比系统调用/中断）** 主动在层级间
 
 **Key Contribution**:
 > Memory is not just stored but *actively organized and interconnected*, closer to a knowledge graph than a flat vector store.
+
+---
+
+## 补充资料：行业实践与技术博客
+
+- **LangChain Memory 模块文档**：https://python.langchain.com/docs/modules/memory/  
+  LangChain 的 memory 模块是目前用得最多的 agent 记忆方案之一。文档里把 ConversationBufferMemory、ConversationSummaryMemory、VectorStoreRetrieverMemory 等几种实现都列出来了，可以快速理解工程上都有哪些记忆模式。看完再回去读 MemGPT 会发现概念对得上。
+
+- **Letta（MemGPT 项目）官方博客**：https://www.letta.com/blog  
+  MemGPT 团队后来注册了 Letta 这个公司继续做，博客上有不少关于分层记忆架构工程落地的文章。比论文里讲得更接地气，包括怎么选向量库、记忆更新的触发时机、跨 session 的状态同步等等。
+
+- **Mem0 项目文档和博客**：https://docs.mem0.ai/  
+  跟论文里读的那篇 Mem0 配合着看。项目文档直接有代码示例，用起来挺简单的——几行代码就能给 agent 加上跨 session 记忆。他们还专门写了一篇 blog 讲为什么需要"记忆层"而不是把所有聊天记录塞进 prompt。
+
+- 知乎和公众号上搜"AI Agent 记忆设计"、"大模型长期记忆"可以找到一些实践分享。印象比较深的一个观点是：大部分团队现阶段的 agent 记忆其实就是"检索历史对话然后塞进 system prompt"，还远远算不上真正的记忆系统。这个批评挺中肯的，跟 MemGPT 论文里的 motivation 也对得上。
+
+- Cognee（https://github.com/topoteretes/cognee ）是另一个做 agent memory 的开源项目，思路偏知识图谱方向，跟 A-MEM 有点像。star 数不算多但代码写得比较清晰，想了解图结构记忆怎么实现的可以翻翻。

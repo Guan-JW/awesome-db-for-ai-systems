@@ -83,19 +83,19 @@
 
 #### 阅读笔记
 
-**解决什么问题**：通用数据库（MySQL、PostgreSQL）或纯向量库（FAISS）都不够用——前者不支持高效向量检索，后者缺乏数据管理能力（持久化、一致性、并发写入、多种索引类型切换）。生产级 AI 系统需要一个专门为向量设计的"完整数据库"。
+Milvus 这篇是 SIGMOD 2021 的 system paper，讲的是怎么从零设计一个面向向量检索的完整数据库，不只是搜索引擎。
 
-**核心思路**：Milvus 的四个关键设计决策：
-- **存储计算分离**：查询节点可独立扩展，不受写入瓶颈影响，云原生部署
-- **多级存储分层**：热数据 in-memory（毫秒延迟）→ 温数据 SSD（秒级召回）→ 冷数据对象存储（按需加载），大幅降低成本
-- **多索引类型支持**：同一个 collection 可按场景选择 HNSW（高召回率）、IVF（低内存）、DiskANN（十亿级磁盘索引），用户无需更换系统
-- **WAL + 一致性保证**：Write-Ahead Log 确保向量插入的原子性和崩溃恢复，首次将关系 DB 的 ACID 部分引入向量 DB
+我觉得它解决的最根本的问题是：FAISS 这类库只管"搜"，不管"存"。没有持久化、没有崩溃恢复、没法多人并发写入。一旦要上生产环境，就得自己在外面包一层数据管理逻辑，非常折腾。Milvus 把这些能力内建了。
 
-**实验结果**：SIGMOD 2021 实验展示：在十亿级向量数据集上，Milvus 比 FAISS+PostgreSQL 组合快 5-10×；支持每秒数百万次查询（QPS），延迟 <10ms（p99）。
+几个比较关键的设计点：
+- 存储计算分离，查询节点可以独立扩缩容
+- 分层存储：热数据放内存、温数据落 SSD、冷数据扔对象存储。这个跟传统 DB 的 buffer pool 思路基本一样
+- 提供 WAL（预写日志），崩溃后能恢复。这个在向量库里比较少见
+- 一个 collection 可以选不同索引类型（HNSW、IVF、DiskANN），不用换系统
 
-**与本 survey 的关联**：Milvus 是 RAG/Agent 记忆系统在生产环境中最常用的向量 DB 之一，定义了 purpose-built vector DB 的标准架构——多级存储、多索引类型、WAL 一致性。理解 Milvus 就理解了为什么 AI 系统需要专用向量数据库而不是通用 DB 打补丁。
+论文里给的数据是十亿级向量上比 FAISS+PostgreSQL 组合快 5-10 倍，p99 延迟 <10ms。不过这个对比有点不公平，毕竟 FAISS+PG 本来就不是为一起用设计的。
 
-**小结**：Milvus 是第一个完整的生产级向量数据库 system paper——它首次回答了"如何像运营关系数据库一样运营向量数据库"的工程问题。
+放在 survey 里，Milvus 可以作为第 3 章（Vector DB）的核心案例，用来说明"为什么 AI 系统需要专用向量数据库而不是在现有 DB 上打补丁"。
 
 ---
 
@@ -125,3 +125,21 @@
 
 **Key Contribution**:
 > Best reference for the "Vector Database Systems" chapter of the survey.
+
+---
+
+## 补充资料：行业实践与技术博客
+
+下面是一些论文之外的参考材料，主要来自各向量数据库厂商的工程博客和中文社区讨论，读论文啃不动的时候可以先看这些建立直觉。
+
+- **Pinecone 官方学习指南 "What is a Vector Database?"**  
+  https://www.pinecone.io/learn/vector-database/  
+  非常适合入门，配图清晰，把向量数据库和传统数据库的区别讲得很到位。缺点是作为商业公司文档有一定倾向性，对自家产品的局限性一笔带过。
+
+- Qdrant 技术博客里有一篇关于 HNSW 参数调优的文章（https://qdrant.tech/articles/filtrable-hnsw/ ），讲了 `ef_construct`、`M` 这些参数怎么影响召回率和延迟。做过向量检索的都知道调这些参数是玄学，这篇给了一些经验值，比较实用。
+
+- Zilliz（Milvus 背后的公司）的工程博客 https://zilliz.com/blog 上干货不少，比较推荐他们关于十亿级向量分布式检索的几篇实战文章。虽然免不了夹带私货推自家方案，但工程细节比论文里写得详细多了。
+
+- 知乎上搜"向量数据库选型"能找到好几个高赞回答，比较有参考价值的是对比 Milvus / Qdrant / Weaviate / pgvector 各自适合什么场景的讨论。大体结论是：小规模用 pgvector 省事，中等规模 Qdrant 性能好还轻量，大规模上 Milvus 生态成熟但运维成本高。不过知乎帖子时效性强，具体版本对比可能已经过时了。
+
+- pgvector 的 GitHub README（https://github.com/pgvector/pgvector ）值得快速过一遍。在已有 PostgreSQL 基础设施的团队里，加个扩展就能做向量检索，不需要额外引入一套新系统。Ann Benchmarks 上的性能数据也在不断改善。

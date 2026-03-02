@@ -6,9 +6,9 @@
 
 ## Abstract (Draft)
 
-The rapid proliferation of large language model (LLM)-based AI systems — including chatbots, autonomous agents, and multi-agent frameworks — has surfaced a critical gap: the absence of a unified, mature data management layer. Current AI systems rely on an ad-hoc mixture of key-value stores, vector databases, and file systems that were not designed for the unique requirements of AI workloads. These requirements include managing multimodal data, supporting semantic similarity retrieval, maintaining consistency under concurrent AI writes, and enabling the "distillation" of unstructured agent context into queryable structured records.
+LLM-based AI systems — chatbots, agents, multi-agent frameworks — increasingly need proper data management, but current practice is ad-hoc. Most systems cobble together KV stores, vector databases, and file systems that were not designed for AI workloads. Issues include multimodal data handling, semantic similarity retrieval, consistency under concurrent AI writes, and converting unstructured agent context into queryable records.
 
-This survey systematically examines the role of databases in modern AI systems across three architectural layers: (1) DB as the Storage Engine — static data infrastructure including vector databases, training data management, and feature stores; (2) DB as the Memory System — runtime data management for agent memory, RAG pipelines, KV cache, and workflow state; and (3) DB as the Execution Engine — databases as application-layer participants including DB agents and multi-agent database systems. We analyze existing solutions, identify open challenges, and propose a research agenda toward AI-native database design.
+This survey examines database roles in AI systems across three layers: (1) Storage Engine — vector DBs, training data management, feature stores; (2) Memory System — agent memory, RAG pipelines, KV cache, workflow state; (3) Execution Engine — DB agents and multi-agent database systems. We review existing solutions, identify gaps, and discuss directions toward AI-native database design.
 
 ---
 
