@@ -26,7 +26,8 @@ This survey examines database roles in AI systems across three layers: (1) Stora
 - 2.1 Types of AI systems (chatbots, RAG apps, agents, multi-agent)
 - 2.2 Data access patterns in AI systems (read-heavy retrieval, write-on-update, event sourcing)
 - 2.3 Database types used today (KV, Vector, Relational, Graph, Time-series)
-- 2.4 Three-layer taxonomy of DB roles in AI systems (Figure: taxonomy.png)
+- 2.4 Three-layer taxonomy of DB roles: Storage, Memory, Execution
+- 2.5 **The Unified Architecture** (Figure: Integrated Data Flow from Storage to Execution)
 
 ---
 
@@ -35,51 +36,34 @@ This survey examines database roles in AI systems across three layers: (1) Stora
 > 数据库作为 AI 系统的静态数据仓库
 
 ## 3. Vector Database Systems
-
 - 3.1 ANN algorithms: HNSW, IVF, DiskANN
 - 3.2 System architecture: Milvus, Weaviate, Qdrant, pgvector
 - 3.3 Hybrid search: vector + scalar predicates (VBASE)
-- 3.4 Scalability, consistency, and durability
-- 3.5 Benchmarking vector databases
 
-## 4. Training Data & Embedding Management
-
-- 4.1 Large-scale training data storage and versioning
-- 4.2 Semantic deduplication for AI-generated data (SemDeDup)
-- 4.3 Embedding lifecycle: generation, indexing, staleness, refresh
-- 4.4 Learned index structures — ML meets DB internals
-- 4.5 Feature stores: bridging training and serving
+## 4. Feature Stores & Training Data
+- 4.1 Feature Stores: The "ETL for AI" (Feast, Tecton)
+  - *Point-in-Time Correctness*
+  - *Online/Offline Skew*
+- 4.2 Training Data Management (SemDeDup, DataComp)
+- 4.3 Embedding Versioning & Lifecycle
 
 ---
 
 ## Part II — DB as the Memory System (Middleware Layer)
 
-> 数据库管理 AI 系统运行时动态产生的数据
+> 数据库管理 AI 系统运行时动态产生的中间状态
 
 ## 5. Agent Memory Systems
+- 5.1 The Memory Hierarchy: Context Window vs. Vector DB vs. Graph
+- 5.2 Retrieval-Augmented Generation (RAG) as Memory Retrieval
+- 5.3 Memory Distillation: From unstructured logs to structured facts (Mem0)
 
-- 5.1 Memory architectures for LLM agents (CoALA framework)
-- 5.2 Short-term context management
-- 5.3 Long-term persistent memory (MemGPT, Generative Agents)
-- 5.4 Memory distillation: from fuzzy context to structured records (Mem0, A-MEM)
-- 5.5 Multi-agent shared memory
-- 5.6 Open challenges: consistency, deduplication, eviction policies
-
-## 6. RAG & Retrieval Pipelines
-
-- 6.1 Canonical RAG architecture and the retrieval DB
-- 6.2 Advanced retrieval strategies (Self-RAG, Corrective RAG, Adaptive RAG)
-- 6.3 Graph-based RAG (GraphRAG)
-- 6.4 Multimodal RAG
-- 6.5 From single-query RAG to agentic retrieval (enterprise evolution)
-- 6.6 Data pipeline challenges: chunking, embedding, indexing, staleness
-
-## 7. Runtime State, KV Cache & Coordination
-
-- 7.1 KV cache management: offloading, sharing, lifecycle
-- 7.2 Workflow state persistence: checkpoints, snapshots, time-travel (LangGraph)
-- 7.3 Shared state patterns (blackboard, event sourcing, pub/sub)
-- 7.4 Consistency and isolation in multi-agent DB access
+## 6. Runtime State & KV Cache
+- 6.1 **KV Cache Management**: The "Virtual Memory" of LLM Serving
+  - *PagedAttention (vLLM)*
+  - *Disaggregated Architecture (Mooncake)*
+- 6.2 Agent State Persistence (LangGraph Checkpoints)
+- 6.3 Multi-Agent Coordination via Shared State
 
 ---
 
