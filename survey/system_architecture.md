@@ -28,6 +28,7 @@ graph TD
         L3_Agent --> L3_Planner[Planner & Reasoner]
         L3_Planner --> |Generate SQL/Code| L3_Executor[Tool Executor]
         L3_Executor --> |Feedback| L3_Agent
+        L3_Executor --> |AI Functions| L3_AIFunc[AI_EMBED / AI_COMPLETE / AI_RERANK]
     end
 
     %% Layer 2: Memory Context
@@ -35,18 +36,28 @@ graph TD
         L3_Agent <--> |Read/Write Context| L2_ShortTerm[Short-Term Memory / Context Window]
         L2_ShortTerm <--> |Swap/Cache| L2_KVCache[KV Cache Manager]
         L3_Agent <--> |Retrieve History| L2_LongTerm[Long-Term Agent Memory]
+        L2_LongTerm <--> |In-DB RAG| L2_RAG[PowerRAG / RAG Pipeline]
     end
 
     %% Layer 1: Storage Context
     subgraph "Layer 1: Storage Engine (The Knowledge Base)"
         L2_LongTerm -.-> |Index/Search| L1_VectorDB[(Vector Database)]
+        L2_RAG -.-> |Hybrid Search| L1_MultiModal[(Multimodal Store: Vector+Text+JSON+GIS)]
         L3_Executor --> |SQL Query| L1_Relational[(Relational DB / Warehouse)]
         L3_Executor --> |Fetch Features| L1_FeatureStore[(Feature Store)]
+        L3_Executor --> |Fork Table| L1_Branch[(Data Branch / Sandbox)]
         
         %% Data Ingestion Flows
         RawData[Raw Data Sources] --> |ETL Pipeline| L1_VectorDB
         RawData --> |Feature Eng.| L1_FeatureStore
+        MultimodalData[Multimodal Data: Image/Audio/Video] --> |Embed & Index| L1_MultiModal
     end
+
+    %% Edge-Cloud Dimension
+    subgraph "Edge-Cloud Sync"
+        EdgeDB[Edge DB: Embedded Mode] <--> |Schema-Compatible Sync| CloudDB[Cloud DB: Distributed Mode]
+    end
+    L1_MultiModal -.-> EdgeDB
 
     %% Cross-Layer Interactions
     L2_KVCache -.-> |Offload PagedAttention| L1_Relational
@@ -59,17 +70,29 @@ graph TD
 - **Vector Database**: Mature. Focus on HNSW, PQ, and System issues (resource isolation).
 - **Feature Store**: **[Gap Filled]** Manages training-serving skew. Key systems: Feast.
 - **Relational DB**: The target of Text-to-SQL.
+- **Multimodal Unified Storage**: **[New]** Co-managing vectors, fulltext, JSON, GIS in one engine. Key system: seekdb (LSM-Tree based, ACID compliant). Competes with pgvector+PostGIS (extension approach) vs. multi-system assembly (Milvus+ES+PG).
+- **Data Branching**: **[New]** Copy-on-Write table forking for AI experimentation (seekdb Fork Table, Neon branching). Enables reproducible feature snapshots and isolated A/B testing.
 
 ### Layer 2: Memory System
-- **Agent Memory**: Bridging the gap between stateless LLMs and stateful applications.
+- **Agent Memory**: Bridging the gap between stateless LLMs and stateful applications. **[New]** DB-native memory (seekdb PowerMem) vs. application-layer memory (MemGPT, Mem0). Multimodal memory (visual-spatial for embodied AI) is an open frontier.
 - **KV Cache**: **[Gap Filled]** The "Virtual Memory" of LLM serving. Key systems: vLLM (PagedAttention), Mooncake (Disaggregated).
-- **Runtime State**: Checkpointing for long-running workflows (LangGraph).
+- **Runtime State**: Checkpointing for long-running workflows (LangGraph). **[New]** Fork Table as per-agent data sandbox for multi-agent isolation.
+- **In-database RAG**: **[New]** Entire RAG pipeline inside the DB engine (seekdb PowerRAG: parse → chunk → embed → index → retrieve in SQL). Reduces data movement vs. application-layer RAG (LangChain/LlamaIndex).
 
 ### Layer 3: Execution Engine
 - **Text-to-SQL**: Translating intent to query. Evolution from single-shot to multi-agent (MAC-SQL).
 - **DB Agents**: Autonomous agents that manage database administration (tuning, indexing).
+- **In-database AI Functions**: **[New]** AI_EMBED, AI_COMPLETE, AI_RERANK as SQL-level primitives (seekdb, MindsDB). Moves inference into the query engine.
 
-## 4. Evaluation Strategy (Low-Experiment Approach)
+## 4. Cross-Cutting Dimensions
+
+### Multimodal Data Management
+A vertical thread across all three layers: L1 stores heterogeneous data types (vector+text+JSON+GIS) in unified engines; L2 manages multimodal agent memory and cross-modal RAG retrieval; L3 handles multimodal query inputs (image → embedding → SQL). Current gap: no systematic DB-community treatment of multimodal AI data management.
+
+### Cloud-Edge-Device Deployment
+AI databases must span deployment scales: embedded mode on edge devices (1C2G, robots, vehicles) ↔ distributed clusters on cloud. Key requirements: lightweight runtime, offline capability, schema-compatible sync. seekdb (embedded ↔ OceanBase distributed) is the primary example; SQLite+FAISS is the ad-hoc baseline.
+
+## 5. Evaluation Strategy (Low-Experiment Approach)
 
 To align with modern VLDB survey standards while minimizing heavy engineering overhead, we propose:
 

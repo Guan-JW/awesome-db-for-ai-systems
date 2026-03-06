@@ -143,3 +143,14 @@ Milvus 这篇是 SIGMOD 2021 的 system paper，讲的是怎么从零设计一�
 - 知乎上搜"向量数据库选型"能找到好几个高赞回答，比较有参考价值的是对比 Milvus / Qdrant / Weaviate / pgvector 各自适合什么场景的讨论。大体结论是：小规模用 pgvector 省事，中等规模 Qdrant 性能好还轻量，大规模上 Milvus 生态成熟但运维成本高。不过知乎帖子时效性强，具体版本对比可能已经过时了。
 
 - pgvector 的 GitHub README（https://github.com/pgvector/pgvector ）值得快速过一遍。在已有 PostgreSQL 基础设施的团队里，加个扩展就能做向量检索，不需要额外引入一套新系统。Ann Benchmarks 上的性能数据也在不断改善。
+
+---
+
+## 补充：多模统一检索与 AI 原生方案
+
+> 参看 `papers/L1-Storage Engine/L1-04-ai-native-db-seekdb.md`
+
+除了上面这些"纯向量"或"向量扩展"方案，还有一条路线是把向量能力直接内建到多模数据库里：
+
+- **seekdb (OceanBase)**：在一个引擎里原生支持向量索引（HNSW/IVF）+ 全文索引（BM25）+ 关系型 + JSON + GIS。一条 SQL 里可以同时做向量召回和关键词召回，然后用 RRF 或 LLM 重排合并结果。跟 pgvector 相比，seekdb 的全文和混合检索能力更完整；跟 Elasticsearch 相比，seekdb 有完整的 ACID 事务和多表 JOIN。
+- 这种"全包型"方案的取舍跟专用向量库正好相反：灵活性和部署简单性好，但在极端向量规模（百亿级）下的性能能否追上 Milvus 还需要观察。

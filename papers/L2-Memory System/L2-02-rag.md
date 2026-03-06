@@ -126,3 +126,23 @@ GraphRAG 的做法是预处理阶段先用 LLM 从文档里抽实体和关系建
 - Jerry Liu（LlamaIndex 创始人）在 Twitter/X 上经常发 RAG 相关的讨论串，内容质量高且紧跟最新进展，推荐关注：https://x.com/jerryjliu0
 
 - 公众号"夕小瑶科技说"等 AI 公众号有时候会发 RAG 的中文实践总结，对英文资料看着费劲的同学比较友好。
+
+---
+
+## 延伸方向：多模态 RAG 与库内 RAG
+
+> 参看 `papers/cross-cutting/multimodal-data-management.md` 和 `papers/L1-Storage Engine/L1-04-ai-native-db-seekdb.md`
+
+### 多模态 RAG
+
+传统 RAG 只检索文本段落。实际应用中越来越多需要检索图表、公式、图片甚至视频片段。代表性工作：
+- **MuRAG**（Chen et al. 2022）：支持图文混合检索和生成
+- **VisRAG**（Yu et al. 2024）：视觉增强的 RAG pipeline
+
+数据库层面的挑战在于：同一个 chunk 可能同时有文本向量和图片向量，混合检索需要跨模态的统一排序。
+
+### 库内 RAG（In-Database RAG）
+
+另一个值得关注的趋势是把 RAG 管线从应用层搬进数据库。seekdb 的 PowerRAG 是目前比较完整的实现——文档入库时自动完成解析、分块、Embedding、索引，查询时一条 SQL 就能跑完 retrieve → rerank → generate 的全流程（通过 AI_EMBED、AI_COMPLETE、AI_RERANK 三个库内函数）。
+
+这个"Doc In, Data Out"的思路跟存储过程类似，减少了数据在应用层和存储层之间的搬运。不过缺点也很明显：跟特定 LLM 服务绑定了，灵活性不如 LangChain/LlamaIndex。

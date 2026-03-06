@@ -8,7 +8,7 @@
 
 ## Open Problems (from meeting discussion)
 
-1. **Multimodal data management**: Text, images, audio, video in one store — no unified mature solution yet
+1. **Multimodal data management**: Text, images, audio, video in one store — no unified mature solution yet. *→ See detailed notes in `papers/cross-cutting/multimodal-data-management.md` and seekdb case study in `L1-04-ai-native-db-seekdb.md`*
 2. **AI-generated data deduplication**: LLM outputs may be semantically duplicate; traditional hash-based dedup fails
 3. **Consistency under concurrent AI writes**: Multi-agent systems may write conflicting facts simultaneously
 4. **Memory distillation pipeline**: Convert fuzzy LLM context → precise structured DB records at scale

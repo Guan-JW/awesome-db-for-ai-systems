@@ -133,3 +133,15 @@
 - 知乎和公众号上搜"AI Agent 记忆设计"、"大模型长期记忆"可以找到一些实践分享。印象比较深的一个观点是：大部分团队现阶段的 agent 记忆其实就是"检索历史对话然后塞进 system prompt"，还远远算不上真正的记忆系统。这个批评挺中肯的，跟 MemGPT 论文里的 motivation 也对得上。
 
 - Cognee（https://github.com/topoteretes/cognee ）是另一个做 agent memory 的开源项目，思路偏知识图谱方向，跟 A-MEM 有点像。star 数不算多但代码写得比较清晰，想了解图结构记忆怎么实现的可以翻翻。
+
+---
+
+## 多模态记忆与 DB 原生记忆方案
+
+> 参看 `papers/cross-cutting/multimodal-data-management.md` 和 `papers/L1-Storage Engine/L1-04-ai-native-db-seekdb.md`
+
+上面几篇（MemGPT、Mem0、A-MEM）都是在应用层实现 agent 记忆，底层拼装向量库+图库+KV 库。另一个思路是把记忆直接做进数据库内核：
+
+- **seekdb PowerMem**：OceanBase 的 seekdb 数据库内置了 Agent 记忆存储模块。记忆的存取在数据库事务内完成，天然有 ACID 保证——不会出现多 Agent 并发更新时的记忆不一致问题。相比 Mem0 那种应用层方案，少了跨系统同步的复杂度，但跟具体数据库绑定了。
+
+- **多模态记忆**是另一个值得关注的 gap：目前所有 agent memory 系统都只处理文本。但具身智能场景里，agent 需要记住"在哪个位置看到了什么物体"（视觉+空间记忆），这需要数据库能同时管理向量、GIS 和结构化数据的混合查询。

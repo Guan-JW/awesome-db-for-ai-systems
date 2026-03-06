@@ -39,6 +39,8 @@ This survey examines database roles in AI systems across three layers: (1) Stora
 - 3.1 ANN algorithms: HNSW, IVF, DiskANN
 - 3.2 System architecture: Milvus, Weaviate, Qdrant, pgvector
 - 3.3 Hybrid search: vector + scalar predicates (VBASE)
+- 3.4 Multimodal vector management: cross-modal retrieval, unified embedding spaces (CLIP/ImageBind), mixed-distance indexing
+- 3.5 Unified multi-model storage: relational + vector + fulltext + JSON + GIS in one engine (seekdb, pgvector+PostGIS)
 
 ## 4. Feature Stores & Training Data
 - 4.1 Feature Stores: The "ETL for AI" (Feast, Tecton)
@@ -46,6 +48,7 @@ This survey examines database roles in AI systems across three layers: (1) Stora
   - *Online/Offline Skew*
 - 4.2 Training Data Management (SemDeDup, DataComp)
 - 4.3 Embedding Versioning & Lifecycle
+- 4.4 Data Branching for AI Experimentation: Copy-on-Write approaches (seekdb Fork Table, Neon branching, LakeFS)
 
 ---
 
@@ -57,6 +60,8 @@ This survey examines database roles in AI systems across three layers: (1) Stora
 - 5.1 The Memory Hierarchy: Context Window vs. Vector DB vs. Graph
 - 5.2 Retrieval-Augmented Generation (RAG) as Memory Retrieval
 - 5.3 Memory Distillation: From unstructured logs to structured facts (Mem0)
+- 5.4 Multimodal Agent Memory: visual-spatial memory (embodied AI), cross-modal retrieval of past experience
+- 5.5 In-database Memory Management: DB-native memory stores (seekdb PowerMem) vs. application-layer approaches (MemGPT, Mem0)
 
 ## 6. Runtime State & KV Cache
 - 6.1 **KV Cache Management**: The "Virtual Memory" of LLM Serving
@@ -64,6 +69,7 @@ This survey examines database roles in AI systems across three layers: (1) Stora
   - *Disaggregated Architecture (Mooncake)*
 - 6.2 Agent State Persistence (LangGraph Checkpoints)
 - 6.3 Multi-Agent Coordination via Shared State
+- 6.4 Data Sandboxing for Multi-Agent Isolation: Fork Table as per-agent workspace
 
 ---
 
@@ -91,10 +97,12 @@ This survey examines database roles in AI systems across three layers: (1) Stora
 
 ## 10. AI-Native Database Design
 
-- 10.1 Multimodal storage
-- 10.2 In-database ML inference
+- 10.1 Multimodal unified storage: challenges of co-managing vectors, text, JSON, GIS in one engine
+- 10.2 In-database AI functions: embedding, inference, reranking inside SQL (seekdb AI Functions, MindsDB)
 - 10.3 Semantic deduplication at scale
-- 10.4 Toward a unified AI-native DB: open research agenda
+- 10.4 Data branching and versioning for AI workflows (Fork Table, LakeFS)
+- 10.5 Case study: seekdb as a cross-layer AI-native DB (L1 storage + L2 memory + L3 execution)
+- 10.6 Toward a unified AI-native DB: open research agenda
 
 ## 11. Enterprise Governance & Operations
 
@@ -107,4 +115,6 @@ This survey examines database roles in AI systems across three layers: (1) Stora
 
 - 12.1 Summary of findings across three layers
 - 12.2 Key open challenges
-- 12.3 Future research directions
+- 12.3 Cloud-edge-device deployment: lightweight AI databases for embodied intelligence and IoT
+- 12.4 The multimodal frontier: from text-only to universal data management for AI
+- 12.5 Future research directions
