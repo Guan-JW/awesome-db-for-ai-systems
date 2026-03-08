@@ -85,6 +85,8 @@ seekdb 的 PowerRAG 管线在这方面有部分支持——文档入库时可以
 
 seekdb 的 AI Functions（AI_EMBED、AI_COMPLETE）在一定程度上做了这件事——用户可以在 SQL 里直接调 LLM/Embedding 模型，不需要在应用层预处理。但完整的"多模态输入 → 查询规划 → 混合检索 → 结果融合"链条还没有谁做得很好。
 
+另一个思路是 **Agentic Search**：不走传统的 Text-to-SQL，而是让 agent 自主规划搜索策略。Weaviate 的 Query Agent 在法律文档场景里做了这个——PDF 页面直接用多向量模型（ColModernVBERT）做视觉编码，不走 OCR，agent 自动决定搜哪些 collection、用什么过滤条件、怎么重排。这种模式下，查询入口本身就不局限于文本，PDF 的表格、版式等视觉信息都保留了下来。
+
 ---
 
 ## 三、云-边-端：多模态数据的部署挑战
@@ -113,14 +115,15 @@ seekdb 的嵌入式模式（`pip install seekdb`，1C2G 运行）在端侧部署
 
 ## 四、跟 survey 各章的衔接点
 
-| Survey 章节        | 多模态扩展内容                             | 对应数据库挑战               |
-| :----------------- | :----------------------------------------- | :--------------------------- |
-| Ch.3 Vector DB     | 多模态向量索引（跨模态检索、混合距离度量） | 统一索引结构，减少索引冗余   |
-| Ch.4 Feature Store | 多模态特征管理（图文特征对齐、特征版本化） | Feature Store 支持非表格特征 |
-| Ch.5 Agent Memory  | 多模态记忆存储与检索                       | 跨模态记忆蒸馏、一致性保证   |
-| Ch.6 RAG           | 多模态 RAG pipeline（图文混合检索）        | 混合索引、跨模态 reranking   |
-| Ch.10 AI-Native DB | 多模态统一存储引擎设计（如 seekdb）        | LSM-Tree 上的多类型索引共存  |
-| Ch.12 Future       | 云-边-端多模态数据管理                     | 端侧轻量多模数据库           |
+| Survey 章节        | 多模态扩展内容                                                  | 对应数据库挑战               |
+| :----------------- | :-------------------------------------------------------------- | :--------------------------- |
+| Ch.3 Vector DB     | 多模态向量索引（跨模态检索、混合距离度量）                      | 统一索引结构，减少索引冗余   |
+| Ch.4 Feature Store | 多模态特征管理（图文特征对齐、特征版本化）                      | Feature Store 支持非表格特征 |
+| Ch.5 Agent Memory  | 多模态记忆存储与检索                                            | 跨模态记忆蒸馏、一致性保证   |
+| Ch.6 RAG           | 多模态 RAG pipeline（图文混合检索）                             | 混合索引、跨模态 reranking   |
+| Ch.8 DB Agent      | Agentic Search 的多模查询规划（PDF→视觉encoding→agent routing） | Multivector 存储与压缩       |
+| Ch.10 AI-Native DB | 多模态统一存储引擎设计（如 seekdb）                             | LSM-Tree 上的多类型索引共存  |
+| Ch.12 Future       | 云-边-端多模态数据管理                                          | 端侧轻量多模数据库           |
 
 ---
 
@@ -128,6 +131,8 @@ seekdb 的嵌入式模式（`pip install seekdb`，1C2G 运行）在端侧部署
 
 - **多模态 embedding 对齐**：CLIP (Radford et al., ICML 2021), ImageBind (Girdhar et al., CVPR 2023), BLIP-2 (Li et al., ICML 2023)
 - **多模态 RAG**：MuRAG (Chen et al., 2022), UniIR (Wei et al., 2023), VisRAG (Yu et al., 2024)
+- **多向量表示与压缩**：ColBERT (Khattab & Zaharia, 2020), ColPali/ColModernVBERT (视觉 token 级 multivector), Muvera (multivector 压缩, Weaviate)
+- **Agentic Search**：Weaviate Query Agent (blog: legal RAG app, 2026-02-26, https://weaviate.io/blog/legal-rag-app)
 - **具身智能数据管理**：暂无直接的数据库论文，主要参考 ROS 社区的数据管理讨论和 OceanBase 的应用场景文档
 - **端侧数据库**：SQLite, DuckDB (嵌入式分析), seekdb (嵌入式多模搜索)
 

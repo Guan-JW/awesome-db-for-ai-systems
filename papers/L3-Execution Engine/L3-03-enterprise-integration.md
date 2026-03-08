@@ -93,9 +93,31 @@
 
 ---
 
+### [Weaviate Query Agent] Agentic Search for Enterprise Retrieval
+
+- **Type**: Official product + engineering blog
+- **Links**:
+	- https://weaviate.io/blog/legal-rag-app
+	- https://docs.weaviate.io/agents/query
+
+**What it does**:
+> Query Agent 自动分析 collection schema、拆分复杂查询、构建精确过滤条件（日期/类型/管辖区）、调用 rerank sub-agent 做重排、最后合成带引用来源的回答。两种模式：Search Mode（发现式检索）和 Ask Mode（直接生成答案）。
+
+**Enterprise value**:
+> 对法律/金融这种需要精确性的场景，避免了 naive RAG 的"语义相似但不相关"问题（比如把 2022 年条款当 2024 年返回）。Agent 自动做的元数据过滤在传统 RAG 里需要开发者手写大量规则。
+
+**跟 DB Agent 的区别**:
+> Agentic Search 是只读的——agent 只决定检索策略，不会修改数据。DB Agent（如 Text-to-SQL 系统）可以执行写操作。这是一个重要的能力分界线，决定了对底层数据库的安全和事务需求。
+
+**多模态亮点**:
+> 用 multivector 模型（ColModernVBERT）直接对 PDF 页面做视觉编码，不走 OCR。Muvera 压缩把 multivector 降到可用的内存和延迟范围内。这是目前看到的最干净的"文档直接入向量库"方案。
+
+---
+
 ## How to use these sources in survey chapters (三层架构版)
 
-- **Chapter 3 (Vector DB — Layer 1)**: Use Elasticsearch/OpenSearch/MongoDB operational knobs as production-side evidence beyond ANN algorithms.
+- **Chapter 3 (Vector DB — Layer 1)**: Use Elasticsearch/OpenSearch/MongoDB operational knobs as production-side evidence beyond ANN algorithms. Weaviate multivector + Muvera compression as multimodal vector storage case.
 - **Chapter 6 (RAG — Layer 2)**: Use Azure/Databricks/Elastic evidence to argue why agentic + hybrid retrieval is becoming mainstream.
+- **Chapter 8 (DB Agents — Layer 3)**: Weaviate Query Agent as the Agentic Search exemplar; contrast with DB Agents (read-only vs. read-write spectrum).
 - **Chapter 9 (DB MAS — Layer 3)**: Use Foundry IQ and Databricks as two concrete "platformized knowledge layer" cases.
 - **Chapter 11 (Governance — Cross-cutting)**: Use ACL, permission inheritance, and billing/usage observability details as practical governance evidence.

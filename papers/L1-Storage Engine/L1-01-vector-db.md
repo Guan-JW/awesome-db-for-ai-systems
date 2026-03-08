@@ -154,3 +154,14 @@ Milvus 这篇是 SIGMOD 2021 的 system paper，讲的是怎么从零设计一�
 
 - **seekdb (OceanBase)**：在一个引擎里原生支持向量索引（HNSW/IVF）+ 全文索引（BM25）+ 关系型 + JSON + GIS。一条 SQL 里可以同时做向量召回和关键词召回，然后用 RRF 或 LLM 重排合并结果。跟 pgvector 相比，seekdb 的全文和混合检索能力更完整；跟 Elasticsearch 相比，seekdb 有完整的 ACID 事务和多表 JOIN。
 - 这种"全包型"方案的取舍跟专用向量库正好相反：灵活性和部署简单性好，但在极端向量规模（百亿级）下的性能能否追上 Milvus 还需要观察。
+
+### Multivector 与视觉向量化
+
+另一个前沿方向是 **multivector representation**——一个文档对应多个向量而非一个。Weaviate 在法律文档检索场景里用了 ColModernVBERT（late-interaction 多向量模型），直接对 PDF 页面做视觉编码，跳过 OCR 和文本 chunking。每页 PDF 产生多个视觉 token 级的向量，检索时做 late interaction 匹配。
+
+这对向量库的存储层提出了新要求：
+- 一个 object 不再对应一个向量，而是一组向量（几十到几百个）
+- 需要高效的 multivector 压缩方案（Weaviate 用的 Muvera 压缩：ksim=4, dprojections=16, repetitions=20）
+- 检索时的 scoring 不再是单纯的余弦相似度，而是 MaxSim（每个查询 token 找最相似的文档 token 再求和）
+
+来源：https://weaviate.io/blog/legal-rag-app

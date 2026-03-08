@@ -80,9 +80,12 @@ This survey examines database roles in AI systems across three layers: (1) Stora
 ## 8. DB Agents: Natural Language Interfaces to Databases
 
 - 8.1 Text-to-SQL: datasets (Spider, BIRD, Spider 2.0) and methods (DIN-SQL, DAIL-SQL, MAC-SQL)
-- 8.2 Single DB agent: multi-step planning over databases
-- 8.3 NL interfaces beyond SQL (NL2KV, NL2Graph)
-- 8.4 Evaluation challenges in enterprise settings
+- 8.2 Agentic Search vs. DB Agent: the read/write spectrum
+  - *Agentic Search*: autonomous query planning & routing over vector/hybrid stores, read-only (Weaviate Query Agent)
+  - *DB Agent*: full CRUD — can also write, modify schema, tune indexes
+- 8.3 Single DB agent: multi-step planning over databases
+- 8.4 NL interfaces beyond SQL (NL2KV, NL2Graph)
+- 8.5 Evaluation challenges in enterprise settings
 
 ## 9. DB Multi-Agent Systems
 

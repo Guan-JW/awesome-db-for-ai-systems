@@ -115,6 +115,57 @@ NeurIPS 2023 的 benchmark。跟 Spider 比最大的区别是"真实"：95 个�
 
 ---
 
+---
+
+## Agentic Search vs. DB Agent：读写光谱上的位置
+
+> **来源**：Weaviate Blog "Building A Legal RAG App in 36 Hours" (2026-02-26)
+> https://weaviate.io/blog/legal-rag-app
+
+这篇博客有个概念比较有启发：**Agentic Search**。跟我们讨论的 DB Agent（Text-to-SQL、MAC-SQL 这些）不太一样。
+
+### 区别在哪
+
+| 维度     | Agentic Search                                                 | DB Agent                                                 |
+| :------- | :------------------------------------------------------------- | :------------------------------------------------------- |
+| 操作权限 | **只读**：只做检索、过滤、重排                                 | **读写**：可以写数据、改 schema、管理索引                |
+| 推理目标 | 决定**怎么搜**（选哪几个集合、用什么过滤条件、要不要拆子查询） | 决定**执行什么操作**（生成 SQL/DML、做优化、跑管理命令） |
+| 交互对象 | 主要跟向量库/搜索引擎交互                                      | 主要跟关系型数据库交互                                   |
+| 风险等级 | 低（最多查错了）                                               | 高（写错了可能破坏数据）                                 |
+| 典型系统 | Weaviate Query Agent, Azure AI Search Agentic Retrieval        | DIN-SQL, MAC-SQL, Spider 2.0 Agent                       |
+
+Weaviate 的 Query Agent 具体做了这些事：
+1. **Schema 感知**：自动检查可用的 collection 和字段定义，决定查哪个 collection
+2. **查询拆解**：把复杂问题拆成多个子查询（比如"2024年服务协议里的通知期限是多少"会加上日期过滤）
+3. **结构化过滤**：构建精确的 filter + aggregation，不只靠向量相似度
+4. **重排**：用 Rerank Sub-agent 对召回结果按实际相关性重排
+5. **答案合成**：用 Answer Sub-agent 基于筛选后的上下文生成答案
+
+两种模式：Search Mode（发现式检索，返回来源让用户自己看）和 Ask Mode（直接给出有来源引用的答案）。
+
+### 为什么这个区别对 survey 重要
+
+这其实划出了一条清晰的分界线：**数据库在 AI 系统中是「被查询」还是「被操控」**。
+
+- Agentic Search 把数据库当作一组**工具**（tool），agent 只决定检索策略，不动数据本身。
+- DB Agent 把数据库当作一个**被管理的对象**，agent 不仅查数据还能改数据。
+
+从数据库角度看，这两种模式对存储层的要求完全不同：
+- Agentic Search 需要丰富的元数据（schema、collection 信息、字段描述）来辅助查询规划，但不需要 DML 能力
+- DB Agent 需要事务支持、权限控制、操作回滚——因为写操作不可逆
+
+这个读写光谱在我们 survey 里可以作为第 8 章开头的分类框架。
+
+### 多模态方面的亮点
+
+Weaviate 这个 legal app 用了多向量模型（ColModernVBERT）直接把 PDF 页面编码成视觉 token——不走 OCR，不切文本 chunk，直接把每页 PDF 当图片做 multivector embedding。然后用 Muvera 压缩这些多向量表示，降内存降延迟。
+
+这是一个非常具体的**多模态数据入库方式**：文档不再是"先 OCR 提文字、再做 embedding"，而是"保留原始视觉布局、直接做图像级向量化"。对于法律文档这种格式复杂的场景（表格、条款编号、缩进层级），视觉编码显然比 OCR+chunking 保留了更多信息。
+
+数据库层面的启发：向量库需要支持 multivector（一个文档对应多个向量而不是一个），并且需要高效的 multivector 压缩和检索。Weaviate 用 Muvera 做的压缩（ksim=4, dprojections=16, repetitions=20）是这个方向的实际工程方案。
+
+---
+
 ## 补充资料：行业实践与技术博客
 
 - Spider Leaderboard：https://yale-lily.github.io/spider  
