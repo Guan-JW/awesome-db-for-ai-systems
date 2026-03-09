@@ -145,3 +145,85 @@
 - **seekdb PowerMem**：OceanBase 的 seekdb 数据库内置了 Agent 记忆存储模块。记忆的存取在数据库事务内完成，天然有 ACID 保证——不会出现多 Agent 并发更新时的记忆不一致问题。相比 Mem0 那种应用层方案，少了跨系统同步的复杂度，但跟具体数据库绑定了。
 
 - **多模态记忆**是另一个值得关注的 gap：目前所有 agent memory 系统都只处理文本。但具身智能场景里，agent 需要记住"在哪个位置看到了什么物体"（视觉+空间记忆），这需要数据库能同时管理向量、GIS 和结构化数据的混合查询。
+
+---
+
+## 工程案例：OpenClaw 的记忆架构
+
+> **来源**：字节跳动技术团队公众号，2026-02-09
+> https://mp.weixin.qq.com/s/Sx52DN9kktgri77z6cj3vg
+> OpenClaw（原名 Clawdbot）是当下最火的开源个人 AI Agent 框架（GitHub 161K stars）。
+
+OpenClaw 的记忆实现值得仔细看，因为它是目前**用户量最大的 agent 记忆系统实际落地**，而不是学术原型。
+
+### 四类上下文分层
+
+OpenClaw 把 Agent 的上下文分成四类，这个分类跟我们三层架构的映射关系很清晰：
+
+| OpenClaw 上下文                   | 性质               | 对应三层         | 存储方式                            |
+| :-------------------------------- | :----------------- | :--------------- | :---------------------------------- |
+| 长期知识 (Durable Knowledge)      | 持久化事实和偏好   | L1 / L2 边界     | `MEMORY.md` + 日志文件              |
+| 任务记忆 (Task Memory)            | 多步任务的中间产物 | L2 Runtime State | 日期文件 `memory/YYYY-MM-DD.md`     |
+| 会话历史 (Conversational History) | 完整对话记录       | L2 Short-term    | `sessions/<id>.jsonl` (append-only) |
+| 外部资源 (External Resources)     | 代码库、文档、API  | L1 Storage       | 文件系统 + 外部索引                 |
+
+### 记忆分层设计
+
+记忆不是一坨——OpenClaw 明确区分了两层核心结构：
+- **日常日志层**：`memory/YYYY-MM-DD.md`，时序性信息，append-only
+- **核心记忆层**：`MEMORY.md`，提炼后的稳定事实和偏好
+
+实验性的扩展更有意思——`bank/` 目录按语义分类：
+- `world.md`（客观事实）
+- `experience.md`（agent 自身经历）
+- `opinions.md`（主观判断 + 置信度 + 证据指向）
+- `entities/`（实体信息库，每个实体一个文件）
+
+这种分层跟 Generative Agents 的 memory stream + reflection 在思路上是一致的，但 OpenClaw 把它落到了文件系统级别的具体结构上。
+
+### 两套 Backend 方案
+
+特别值得关注的是 OpenClaw 提供了**两种完全不同的记忆存储方案**，这直接映射到我们 survey 讨论的核心问题——agent 记忆该用什么数据库？
+
+**方案 A：文件 + SQLite Backend**
+- 记忆本体：Markdown 文件是 source of truth（人可读、可版本控制）
+- 索引后端：SQLite 充当索引层
+  - `fts5` 扩展做 BM25 全文检索
+  - `sqlite-vec` 扩展做向量相似度搜索
+  - 两者混合检索实现语义+关键词的联合查询
+- 表结构：`files`（文件元数据）→ `chunks`（分块+向量）→ `chunks_fts`（FTS5 虚拟表）→ `chunks_vec`（向量虚拟表）→ `embedding_cache`（避免重复 embedding）
+
+**方案 B：LanceDB Plugin**
+- 完全独立的链路，取代了文件+SQLite 整套体系
+- LanceDB 作为嵌入式向量数据库，自带存储 + embedding + 检索
+- 三个 agent tool：`memory_recall`（搜索）、`memory_store`（保存）、`memory_forget`（删除）
+- 生命周期钩子实现自动化：
+  - `before_agent_start`：自动检索相关记忆注入 prompt（auto-recall）
+  - `agent_end`：自动从对话中抽取值得记住的信息写入 LanceDB（auto-capture）
+- 记忆分类：用 `MemoryCategory` 枚举自动分类（启发式规则匹配）
+
+### 自动记忆刷新（Auto Memory Flush）
+
+一个工程细节很有启发：会话历史过长、即将被压缩（compaction）之前，系统自动触发一个静默 agent turn，提示模型把当前重要上下文存入 Memory 文件。这实际上是一种**数据库层面的 checkpoint 前持久化**——跟 vLLM 的 PagedAttention swap 逻辑有异曲同工之处：在资源不够（context window 溢出）之前，先把关键数据落盘。
+
+### 对 survey 的价值
+
+这个案例对我们 survey 来说有三层价值：
+
+1. **验证三层架构的解释力**：OpenClaw 的四类上下文可以无缝映射到我们的 L1/L2 分层，说明三层框架不是空中楼阁，能解释真实系统的设计选择。
+
+2. **回答"用什么数据库"的问题**：两套 backend 方案（SQLite+FTS5+sqlite-vec vs LanceDB）是"agent 记忆该用什么 DB"这个问题的活生生的 A/B 测试。SQLite 方案更透明（Markdown 作为 source of truth），LanceDB 方案更自动化（钩子驱动的 auto-capture/recall）。
+
+3. **嵌入式 DB 在 agent 记忆中的位置**：SQLite 和 LanceDB 都是嵌入式数据库，不需要独立服务进程。这跟 seekdb 的嵌入式模式定位一致——个人 agent 的记忆不需要 Milvus 集群那种重型方案，轻量嵌入式方案更实际。
+
+### LanceDB 的特性
+
+LanceDB 基于 Lance 列式格式，几个特性跟 agent memory 场景很匹配：
+- 本地优先（local-first），嵌入式部署，无服务
+- 多模态存储（图片、文档、音视频）
+- 多类别索引 + 混合检索（标量 + 向量 + 全文）
+- 数据版本管理内置（基于 Lance 格式的 append-only 版本链）
+
+生态项目值得跟踪：
+- **lance-graph**：基于 Lance 的图查询引擎（支持 Cypher），可以做 agent 的知识图谱
+- **lance-context**：基于 Lance 的多模态、带版本的上下文存储，专门为 agent workflow 设计

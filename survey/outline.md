@@ -62,6 +62,7 @@ This survey examines database roles in AI systems across three layers: (1) Stora
 - 5.3 Memory Distillation: From unstructured logs to structured facts (Mem0)
 - 5.4 Multimodal Agent Memory: visual-spatial memory (embodied AI), cross-modal retrieval of past experience
 - 5.5 In-database Memory Management: DB-native memory stores (seekdb PowerMem) vs. application-layer approaches (MemGPT, Mem0)
+- 5.6 Case study: OpenClaw memory architecture — dual-backend design (SQLite+FTS5 vs. LanceDB), four-type context taxonomy, embedded DB for personal agents
 
 ## 6. Runtime State & KV Cache
 - 6.1 **KV Cache Management**: The "Virtual Memory" of LLM Serving

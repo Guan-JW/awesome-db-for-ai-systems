@@ -19,6 +19,7 @@
 2. **KV cache sharing**: 多用户共用同一段 system prompt 时，如何共享对应的 KV cache 避免重复计算？
 3. **State consistency**: 多 Agent 并发写入工作流状态时，如何保证一致性？
 4. **Checkpoint granularity**: 状态快照的粒度如何选择——太细浪费存储，太粗恢复不精确？
+5. **Auto Memory Flush**: 当 context window 即将溢出时，如何自动将关键上下文持久化？OpenClaw 的做法是在会话压缩前触发一个静默 agent turn——跟 vLLM PagedAttention 的 swap 逻辑异曲同工。
 
 ---
 
